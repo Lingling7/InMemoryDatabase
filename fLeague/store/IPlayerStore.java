@@ -1,4 +1,7 @@
-package fLeague;
+package fLeague.store;
+
+import fLeague.Player;
+import fLeague.PlayerID;
 
 public interface IPlayerStore
 {
@@ -6,5 +9,5 @@ public interface IPlayerStore
 
     public void removePlayer(Player player);
 
-    public Player getPlayer(SearchQuery query);
+    public Player getPlayer(PlayerID query);
 }

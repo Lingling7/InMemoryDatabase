@@ -1,4 +1,6 @@
-package fLeague.ballProcessors;
+package fLeague.rules;
+
+import fLeague.PlayerID;
 
 public class Ball
 {
@@ -7,6 +9,11 @@ public class Ball
     private PlayerID _bowler;
     private PlayerID _fielder;
     private WicketType _wicketType;
+
+    public int getRunsScored()
+    {
+        return _runsScored;
+    }
 
     public boolean isAWicket()
     {
@@ -34,16 +41,29 @@ public class Ball
         return _wicketType;
     }
 
-    public class PlayerID
+    public Ball setBatsman(PlayerID playerID)
     {
-        public String getTeam()
-        {
-
-        }
-
-        public String getName()
-        {
-            return null;
-        }
+        _batsman = playerID;
+        return this;
     }
+
+    public Ball setBowler(PlayerID playerID)
+    {
+        _bowler = playerID;
+        return this;
+    }
+
+    public Ball setFielder(PlayerID playerID)
+    {
+        _fielder = playerID;
+        return this;
+    }
+    public Ball setWicketType(WicketType type)
+    {
+        _wicketType = type;
+        return this;
+    }
+
+
+
 }

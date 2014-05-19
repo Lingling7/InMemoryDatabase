@@ -1,10 +1,9 @@
-package fLeague.ballProcessors;
+package fLeague.rules;
 
-import fLeague.IPlayerStore;
 import fLeague.Player;
-import fLeague.SearchQuery;
+import fLeague.store.IPlayerStore;
 
-public class BattingRule implements IBallProcessor
+public class BattingRule implements IBallRule
 {
     private static final int SIXER = 6;
     private static final int PENALTY_FOR_DUCK = -5;
@@ -21,10 +20,8 @@ public class BattingRule implements IBallProcessor
     @Override
     public void processBall(Ball ball)
     {
-        SearchQuery batsman = getQuery(ball);
-        Player player = _playerStore.getPlayer(batsman);
-
-        player.ballFaced(ball._runsScored);
+        Player player = _playerStore.getPlayer(ball.getBatsman());
+        player.ballFaced(ball);
         checkIfBatsmanDismissed(ball, player);
         applyBaseScore(player, ball);
         applyImpactScore(player, ball);
@@ -36,24 +33,17 @@ public class BattingRule implements IBallProcessor
     {
         if (ball.isAWicket())
         {
-            Player bowlingPlayer = _playerStore.getPlayer(new SearchQuery(ball.getBowler().getTeam(), ball.getBowler().getName()));
-            Player fielder = _playerStore.getPlayer(new SearchQuery(ball.getFielder().getTeam(), ball.getFielder().getName()));
+            Player bowlingPlayer = _playerStore.getPlayer(ball.getBowler());
+            Player fielder = _playerStore.getPlayer(ball.getFielder());
             player.dismissed(bowlingPlayer, fielder, ball.getWicketType());
-
         }
-    }
-
-    private SearchQuery getQuery(Ball ball)
-    {
-        Ball.PlayerID batsman = ball.getBatsman();
-        return new SearchQuery(batsman.getTeam(), batsman.getName());
     }
 
     private void applyPaceBonus(Player player, Ball ball)
     {
         if (ball.isAWicket())
         {
-            player.addPoints(player.getRuns() - player.getBallsFaced());
+            player.addPoints(player.getRunsScored() - player.getBallsFaced());
         }
     }
 
@@ -67,8 +57,8 @@ public class BattingRule implements IBallProcessor
 
     private boolean isEligibleForMilestoneBonus(Player player, Ball ball)
     {
-        int existingRuns = player.getRuns();
-        int newRuns = player.getRuns() + ball._runsScored;
+        int existingRuns = player.getRunsScored();
+        int newRuns = player.getRunsScored() + ball._runsScored;
         return newRuns / BONUS_CRITERIA - existingRuns / BONUS_CRITERIA == 1;
     }
 
@@ -81,7 +71,7 @@ public class BattingRule implements IBallProcessor
 
         if (ball.isAWicket())
         {
-            if (player.getRuns() == 0)
+            if (player.getRunsScored() == 0)
             {
                 player.addPoints(PENALTY_FOR_DUCK);
             }
